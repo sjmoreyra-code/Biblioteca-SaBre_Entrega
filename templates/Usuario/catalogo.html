@@ -1,0 +1,638 @@
+{% extends "Usuario/base_usuario.html" %}
+{% load static %}
+
+{% block title %}Catálogo - BIBLIOTECA SaBré{% endblock %}
+
+
+{# ENCABEZADO SUPERIOR #}
+{% block encabezado %}
+
+<header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]">
+
+    <div class="h-16 px-gutter-mobile flex items-center justify-between">
+
+        <div class="flex items-center gap-space-sm">
+
+            <button type="button"
+                    id="boton-menu"
+                    aria-label="Abrir menú"
+                    aria-expanded="false"
+                    aria-controls="menu-lateral"
+                    class="boton-menu w-12 h-12 flex items-center justify-center text-primary hover:text-primary-container transition-colors focus:outline-none">
+
+                <span class="material-symbols-outlined text-[26px]">menu</span>
+
+            </button>
+
+            <div class="flex flex-col">
+
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container uppercase tracking-tight">
+                    BIBLIOTECA SaBré
+                </span>
+
+                <span class="font-label-uppercase text-label-uppercase text-on-surface-variant uppercase tracking-wider">
+                    Catálogo
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="flex items-center gap-space-xs">
+
+            <button type="button"
+                    id="theme-toggle-btn"
+                    aria-label="Cambiar tema"
+                    class="w-9 h-9 rounded-full bg-surface-container text-primary-container flex items-center justify-center">
+
+                <span class="material-symbols-outlined">dark_mode</span>
+
+            </button>
+
+
+            {% if user.is_authenticated %}
+
+                <span class="text-xs text-primary-container">
+                    {{ user.username }}
+                </span>
+
+            {% else %}
+
+                <a class="text-xs text-primary-container underline"
+                   href="{% url 'login' %}">
+                    Iniciar sesión
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</header>
+
+{% endblock %}
+
+
+{# FONDO OSCURO DEL MENÚ #}
+{% block fondo_menu %}
+
+<div id="fondo-menu" class="fondo-menu" hidden></div>
+
+{% endblock %}
+
+
+{# MENÚ LATERAL DESPLEGABLE #}
+{% block menu_lateral %}
+
+<aside id="menu-lateral"
+       class="menu-lateral"
+       aria-label="Menú principal"
+       aria-hidden="true"
+       inert>
+
+    <div class="menu-lateral-cabecera">
+
+        <strong>BIBLIOTECA SaBré</strong>
+
+        <button type="button"
+                id="cerrar-menu"
+                aria-label="Cerrar menú">
+            ✕
+        </button>
+
+    </div>
+
+
+    <nav class="menu-lateral-enlaces">
+
+        <a href="{% url 'index_usuario' %}">
+            Inicio
+        </a>
+
+        <a href="{% url 'usuario_catalogo' %}" aria-current="page">
+            Catálogo
+        </a>
+
+        <a href="{% url 'usuario_prestamos' %}">
+            Préstamos y reservas
+        </a>
+
+        <a href="{% url 'usuario_historial' %}">
+            Historial
+        </a>
+
+        <a href="{% url 'usuario_comunidad' %}">
+            Comunidad
+        </a>
+
+
+        {% if user.is_authenticated %}
+
+            <a href="{% url 'usuario_perfil' %}">
+                Perfil
+            </a>
+
+        {% else %}
+
+            <a href="{% url 'login' %}">
+                Ingresar
+            </a>
+
+        {% endif %}
+
+    </nav>
+
+</aside>
+
+{% endblock %}
+
+
+{# CONTENIDO PRINCIPAL DEL CATÁLOGO #}
+{% block contenido %}
+
+<main class="flex flex-col gap-space-md pt-32 pb-32 px-gutter-mobile max-w-5xl mx-auto w-full">
+
+    {# MENSAJES DEL SISTEMA #}
+    {% if messages %}
+
+    <div aria-live="polite" class="space-y-2">
+
+        {% for message in messages %}
+
+        <div class="p-3 rounded-lg bg-surface-container-high text-primary
+                    {% if message.tags == 'error' %}
+                        border border-red-500
+                    {% else %}
+                        border border-primary-container
+                    {% endif %}">
+
+            {{ message }}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+
+    {# BUSCADOR Y FILTROS #}
+    <section class="bg-surface-container p-space-md rounded-xl flex flex-col gap-space-sm shadow-md">
+
+        <div class="flex items-center justify-between gap-2">
+
+            <div>
+
+                <h1 class="text-xl font-black text-primary-container uppercase">
+                    Catálogo de libros
+                </h1>
+
+                <p class="text-sm text-on-surface-variant">
+                    Consultá el fondo bibliográfico de Biblioteca SaBré.
+                </p>
+
+            </div>
+
+
+            <button type="button"
+                    id="btn-helper"
+                    class="px-3 py-2 rounded-lg bg-surface-container-high text-primary-container text-xs font-bold">
+
+                AYUDANTE
+
+            </button>
+
+        </div>
+
+
+        {# BÚSQUEDA #}
+        <label class="sr-only" for="catalog-search-input">
+            Buscar título, autor o categoría
+        </label>
+
+        <div class="relative">
+
+            <input id="catalog-search-input"
+                   type="search"
+                   placeholder="Buscar título, autor o género..."
+                   class="w-full h-12 bg-surface-container-low pl-4 pr-12 rounded-xl text-primary placeholder:text-on-surface-variant">
+
+            <button id="clear-search"
+                    type="button"
+                    aria-label="Borrar búsqueda"
+                    class="hidden absolute right-3 top-3 text-primary-container">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        {# FILTROS POR CATEGORÍA #}
+        <div class="flex flex-wrap gap-2" aria-label="Filtrar por categoría">
+
+            <button type="button"
+                    class="filter-chip bg-primary-container text-on-primary px-3 py-2 rounded-full text-xs font-bold"
+                    data-format="todos">
+
+                Todos
+
+            </button>
+
+
+            {% for categoria in categorias %}
+
+            <button type="button"
+                    class="filter-chip bg-surface-container-high text-on-surface px-3 py-2 rounded-full text-xs font-bold"
+                    data-format="{{ categoria|lower }}">
+
+                {{ categoria }}
+
+            </button>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    {# LECTOR ACCESIBLE DE FICHAS #}
+    <section id="audio-preview-bar"
+             class="bg-surface-container-highest rounded-xl p-space-sm flex items-center justify-between gap-3"
+             aria-label="Lector de fichas bibliográficas">
+
+        <div class="min-w-0">
+
+            <p class="text-xs text-primary-container font-bold uppercase">
+                Lectura accesible de fichas
+            </p>
+
+            <p id="player-title"
+               class="text-sm text-primary truncate">
+
+                Seleccioná una ficha para escucharla
+
+            </p>
+
+        </div>
+
+
+        <div class="flex items-center gap-2">
+
+            <button type="button"
+                    id="player-play-btn"
+                    aria-label="Leer la ficha seleccionada"
+                    class="w-11 h-11 rounded-full bg-primary-container text-on-primary">
+
+                <span id="player-icon" class="material-symbols-outlined">
+                    volume_up
+                </span>
+
+            </button>
+
+
+            <button type="button"
+                    id="speed-btn"
+                    class="px-2 py-2 rounded-lg bg-surface-container text-primary-container text-xs">
+
+                1.0x
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    {# LISTADO DE LIBROS #}
+    <section id="catalog-list"
+             aria-label="Libros registrados"
+             class="flex flex-col gap-space-sm">
+
+
+        {% for libro in libros %}
+
+        <article class="book-card bg-surface-container p-space-md rounded-xl flex flex-col gap-space-sm shadow-md"
+                 data-category="{{ libro.genero_categoria|lower }}"
+                 data-title="{{ libro.titulo_libro|lower }}"
+                 data-author="{{ libro.autor|lower }}">
+
+
+            <div class="flex gap-space-sm items-start">
+
+
+                {# PORTADA #}
+                <div class="w-20 h-28 rounded-lg bg-surface-container-highest shrink-0 flex items-center justify-center text-primary-container">
+
+                    <span class="material-symbols-outlined text-4xl">
+                        menu_book
+                    </span>
+
+                </div>
+
+
+                {# INFORMACIÓN DEL LIBRO #}
+                <div class="flex flex-col min-w-0 flex-1">
+
+
+                    <div class="flex items-center justify-between gap-2 mb-1">
+
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container-high text-primary-container text-xs font-bold uppercase">
+
+                            {% if libro.disponible_catalogo %}
+
+                                Disponible
+
+                            {% else %}
+
+                                No disponible
+
+                            {% endif %}
+
+                        </span>
+
+
+                        <span class="text-xs text-on-surface-variant">
+                            {{ libro.anio }}
+                        </span>
+
+                    </div>
+
+
+                    <h2 class="font-bold text-primary leading-tight">
+                        {{ libro.titulo_libro }}
+                    </h2>
+
+                    <p class="text-sm text-on-surface-variant">
+                        {{ libro.autor }}
+                    </p>
+
+                    <p class="text-xs text-on-surface-variant mt-1">
+                        {{ libro.genero_categoria }} · {{ libro.editorial }}
+                    </p>
+
+
+                    {% if libro.isbn %}
+
+                    <p class="text-xs text-on-surface-variant">
+                        ISBN: {{ libro.isbn }}
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            {# ACCIONES DEL LIBRO #}
+            <div class="grid grid-cols-2 gap-2">
+
+
+                <a href="{% url 'usuario_detalle_libro' libro.id %}"
+                   class="min-h-[48px] px-2 rounded-lg bg-surface-container-highest text-primary-container font-bold text-xs uppercase flex items-center justify-center gap-1">
+
+                    <span class="material-symbols-outlined">
+                        info
+                    </span>
+
+                    Ver detalle
+
+                </a>
+
+
+                {% if user.is_authenticated %}
+
+
+                    {% if libro.disponible_catalogo %}
+
+                    <form method="post"
+                          action="{% url 'solicitar_prestamo' libro.id %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="w-full min-h-[48px] px-2 rounded-lg bg-primary-container text-on-primary font-bold text-xs uppercase flex items-center justify-center gap-1">
+
+                            <span class="material-symbols-outlined">
+                                bookmark_add
+                            </span>
+
+                            Solicitar
+
+                        </button>
+
+                    </form>
+
+
+                    {% else %}
+
+                    <form method="post"
+                          action="{% url 'reservar_libro' libro.id %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="w-full min-h-[48px] px-2 rounded-lg bg-surface-container-high text-primary-container font-bold text-xs uppercase flex items-center justify-center gap-1">
+
+                            <span class="material-symbols-outlined">
+                                event_available
+                            </span>
+
+                            Reservar
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+
+                {% else %}
+
+                <a href="{% url 'login' %}?next={% url 'usuario_catalogo' %}"
+                   class="w-full min-h-[48px] px-2 rounded-lg bg-primary-container text-on-primary font-bold text-xs uppercase flex items-center justify-center">
+
+                    Ingresar para solicitar
+
+                </a>
+
+                {% endif %}
+
+            </div>
+
+
+            {# ESCUCHAR FICHA INDIVIDUAL #}
+            <div class="flex justify-end">
+
+                <button type="button"
+                        class="play-sample-btn text-xs text-primary-container underline"
+                        data-book="{{ libro.titulo_libro|escapejs }} — {{ libro.autor|escapejs }}. Categoría: {{ libro.genero_categoria|escapejs }}. Año: {{ libro.anio }}.">
+
+                    Escuchar ficha
+
+                </button>
+
+            </div>
+
+        </article>
+
+
+        {% empty %}
+
+
+        {# CATÁLOGO VACÍO #}
+        <div class="bg-surface-container p-6 rounded-xl text-center">
+
+            <span class="material-symbols-outlined text-4xl text-primary-container">
+                library_books
+            </span>
+
+            <p class="font-bold text-primary mt-2">
+                Todavía no hay libros cargados en el catálogo.
+            </p>
+
+            <p class="text-sm text-on-surface-variant">
+                El equipo de Biblioteca SaBré incorporará los títulos próximamente.
+            </p>
+
+        </div>
+
+
+        {% endfor %}
+
+    </section>
+
+
+    {# RESULTADO SIN COINCIDENCIAS DE BÚSQUEDA #}
+    <p id="catalog-empty-filter"
+       class="hidden text-center p-4 text-on-surface-variant">
+
+        No hay libros que coincidan con el filtro.
+
+    </p>
+
+
+    {# VENTANA DEL AYUDANTE SaBré #}
+    <dialog id="helper-dialog"
+            class="backdrop:bg-black/80 bg-surface-container p-5 rounded-xl max-w-sm w-[90%] text-primary m-auto">
+
+        <div class="flex flex-col gap-3">
+
+
+            <div class="flex items-center justify-between">
+
+                <h2 class="font-bold text-primary-container">
+                    Ayudante SaBré
+                </h2>
+
+                <button type="button"
+                        id="close-dialog"
+                        aria-label="Cerrar"
+                        class="w-9 h-9 rounded-full bg-surface-container-high">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <p class="text-sm text-on-surface-variant">
+
+                ¿Necesitás una adaptación especial? Escribinos para solicitar digitalización OCR, impresión en Braille o transcripción en macrotipo.
+
+            </p>
+
+
+            <a class="block text-center p-3 rounded-lg bg-primary-container text-on-primary font-bold text-sm"
+               href="mailto:bibliotecasabre@gmail.com?subject=Solicitud%20de%20adaptaci%C3%B3n">
+
+                Pedir adaptación
+
+            </a>
+
+
+            <a id="call-librarian"
+               class="block text-center p-3 rounded-lg bg-surface-container-high text-primary font-bold text-sm"
+               href="mailto:bibliotecasabre@gmail.com?subject=Consulta%20a%20Biblioteca%20SaBr%C3%A9">
+
+                Contactar bibliotecario
+
+            </a>
+
+        </div>
+
+    </dialog>
+
+</main>
+
+{% endblock %}
+
+
+{# NAVEGACIÓN INFERIOR #}
+{% block navegacion_inferior %}
+
+
+<nav aria-label="Navegación principal">
+    <div class="nav-inferior-contenedor">
+
+        <a href="{% url 'index_usuario' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">home</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Inicio</span>
+        </a>
+
+        <a href="{% url 'usuario_catalogo' %}" class="nav-inferior-enlace activo" aria-current="page">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">menu_book</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Catálogo</span>
+        </a>
+
+        <a href="{% url 'usuario_prestamos' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">schedule</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Préstamos</span>
+        </a>
+
+        <a href="{% url 'usuario_historial' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">history</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Historial</span>
+        </a>
+
+        <a href="{% url 'usuario_comunidad' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">groups</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Comunidad</span>
+        </a>
+
+        {% if user.is_authenticated %}
+        <a href="{% url 'usuario_perfil' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">account_circle</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Perfil</span>
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">login</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Ingresar</span>
+        </a>
+        {% endif %}
+
+    </div>
+</nav>
+{% endblock %}

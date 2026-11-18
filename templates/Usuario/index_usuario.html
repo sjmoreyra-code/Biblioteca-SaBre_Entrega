@@ -1,0 +1,679 @@
+
+{% extends "Usuario/base_usuario.html" %}
+{% load static %}
+
+{% block title %}Inicio - Biblioteca SaBré{% endblock %}
+
+
+{# ENCABEZADO SUPERIOR #}
+{% block encabezado %}
+<header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]">
+
+    <div class="h-16 px-gutter-mobile flex items-center justify-between">
+
+        <div class="flex items-center gap-space-sm">
+
+            <button type="button"
+                    id="boton-menu"
+                    aria-label="Abrir menú"
+                    aria-expanded="false"
+                    aria-controls="menu-lateral"
+                    class="boton-menu w-12 h-12 flex items-center justify-center text-primary hover:text-primary-container transition-colors focus:outline-none">
+
+                <span class="material-symbols-outlined text-[26px]">menu</span>
+
+            </button>
+
+            <div class="flex flex-col">
+
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container uppercase tracking-tight">
+                    BIBLIOTECA SaBré
+                </span>
+
+                <span class="font-label-uppercase text-label-uppercase text-on-surface-variant uppercase tracking-wider">
+                    Inicio
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="flex items-center gap-space-xs">
+
+            <button type="button"
+                    aria-label="Opciones de Accesibilidad"
+                    class="h-11 px-space-sm flex items-center gap-1 bg-surface-container hover:bg-surface-container-high text-primary-container font-button-text text-button-text uppercase transition-colors">
+
+                <span class="material-symbols-outlined text-[20px]">accessibility_new</span>
+                <span class="hidden xs:inline text-xs">Acceso</span>
+
+            </button>
+
+            <button id="theme-toggle-btn"
+                    class="theme-toggle-btn w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-primary-container flex items-center justify-center shrink-0 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-container"
+                    aria-label="Cambiar tema claro u oscuro"
+                    title="Alternar modo Claro / Oscuro"
+                    type="button"
+                    onclick="toggleTheme(this)">
+
+                <span class="material-symbols-outlined text-[18px]">dark_mode</span>
+
+            </button>
+
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+
+                <span class="material-symbols-outlined text-on-primary text-[18px]">
+                    person
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+{% endblock %}
+
+
+{# FONDO OSCURO DEL MENÚ #}
+{% block fondo_menu %}
+<div id="fondo-menu" class="fondo-menu" hidden></div>
+{% endblock %}
+
+
+{# MENÚ LATERAL DESPLEGABLE #}
+{% block menu_lateral %}
+<aside id="menu-lateral"
+       class="menu-lateral"
+       aria-label="Menú principal"
+       aria-hidden="true"
+       inert>
+
+    <div class="menu-lateral-cabecera">
+
+        <strong>BIBLIOTECA SaBré</strong>
+
+        <button type="button"
+                id="cerrar-menu"
+                aria-label="Cerrar menú">
+            ✕
+        </button>
+
+    </div>
+
+    <nav class="menu-lateral-enlaces">
+
+        <a href="{% url 'index_usuario' %}">Inicio</a>
+
+        <a href="{% url 'usuario_catalogo' %}">Catálogo</a>
+
+        <a href="{% url 'usuario_prestamos' %}">Préstamos</a>
+
+        <a href="{% url 'usuario_historial' %}">Historial</a>
+
+        <a href="{% url 'usuario_comunidad' %}">Comunidad</a>
+
+        <a href="{% url 'usuario_perfil' %}">Perfil</a>
+
+    </nav>
+
+</aside>
+{% endblock %}
+
+
+{# CONTENIDO PRINCIPAL DE INICIO #}
+{% block contenido %}
+
+<main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen px-gutter-mobile">
+
+    <div class="flex flex-col w-full gap-space-md">
+
+
+        {# BANNER PRINCIPAL #}
+        <section class="relative overflow-hidden bg-surface-container rounded-xl p-space-md shadow-md">
+
+            <div class="flex flex-col gap-space-sm">
+
+                <div class="inline-flex items-center gap-2 self-start px-space-xs py-1 rounded bg-surface-container-high">
+
+                    <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+
+                    <span class="font-label-uppercase text-label-uppercase text-primary-container tracking-wider">
+                        ESPACIO INCLUSIVO
+                    </span>
+
+                </div>
+
+                <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight uppercase">
+                    ACCESO TOTAL A LA CULTURA
+                </h1>
+
+                <p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
+                    Una biblioteca diseñada sin barreras. Descubre nuestro vasto catálogo de recursos accesibles, desde audiolibros hasta textos en braille, en un entorno pensado para todos.
+                </p>
+
+
+                {# ESTADÍSTICAS Y ACCESIBILIDAD #}
+                <div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-lg my-1">
+
+                    <div class="flex items-center gap-space-sm">
+
+                        <div class="w-12 h-12 rounded bg-primary-container flex items-center justify-center text-on-primary">
+
+                            <span class="material-symbols-outlined text-[28px]"
+                                  style="font-variation-settings: 'FILL' 1;">
+                                auto_stories
+                            </span>
+
+                        </div>
+
+                        <div class="flex flex-col">
+
+                            <span class="font-button-text text-button-text text-primary">
+                                +12,400 Títulos
+                            </span>
+
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">
+                                100% Adaptados y Gratuitos
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div aria-label="Símbolo de accesibilidad auditiva"
+                         class="flex items-end gap-1 h-8 pr-2">
+
+                        <span class="w-1.5 h-3 bg-primary-container rounded-full"></span>
+                        <span class="w-1.5 h-6 bg-primary-container rounded-full"></span>
+                        <span class="w-1.5 h-8 bg-primary-container rounded-full"></span>
+                        <span class="w-1.5 h-4 bg-primary-container rounded-full"></span>
+                        <span class="w-1.5 h-2 bg-primary-container rounded-full"></span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="flex flex-col gap-space-xs mt-1">
+
+                    <a href="{% url 'usuario_catalogo' %}"
+                       class="w-full min-h-[48px] px-space-md py-3 rounded bg-primary-container hover:bg-primary text-on-primary font-button-text text-button-text uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-container">
+
+                        <span class="material-symbols-outlined text-[22px]">
+                            manage_search
+                        </span>
+
+                        <span>Explorar Catálogo</span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {# ASISTENTE DE BIBLIOTECA #}
+        <section class="bg-surface-container-high rounded-xl p-space-sm shadow-sm">
+
+            <div class="flex items-center justify-between gap-space-sm">
+
+                <div class="flex items-center gap-space-sm min-w-0">
+
+                    <div class="w-11 h-11 rounded-full bg-primary-container flex items-center justify-center text-on-primary shrink-0">
+
+                        <span class="material-symbols-outlined text-[24px]">
+                            support_agent
+                        </span>
+
+                    </div>
+
+                    <div class="flex flex-col min-w-0">
+
+                        <span class="font-title-card text-title-card text-primary truncate">
+                            ¿Necesitas ayuda guiada?
+                        </span>
+
+                        <span class="font-body-sm text-body-sm text-on-surface-variant truncate">
+                            Lectura en voz alta, reserva asistida
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <button aria-label="Abrir asistente de biblioteca"
+                        class="min-h-[48px] px-space-sm py-2 rounded bg-surface-container-lowest text-primary-container font-button-text text-button-text uppercase flex items-center justify-center shrink-0 hover:bg-surface-bright transition-colors"
+                        type="button">
+
+                    <span>Ayudante</span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        {# IMAGEN DEL ESPACIO SaBré #}
+        <div class="relative w-full h-44 rounded-xl overflow-hidden shadow-md">
+
+            <img class="w-full h-full object-cover"
+                 alt="Interior de una biblioteca pública inclusiva comunitaria con espacios de lectura accesibles."
+                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuANmn1Ec7qphCiFDv4qVA_Qg3Wn4N0ik1aOZ4B2DyVMoF3O6TVVF5VGSxn_WNQq-gff9ynPUw7dDuWYPm9gyd1Ld_YpDtBc2Phq_EJPk2PGm34I-wrGqa6KsT_9xDDfptbqCnCAHiVKfb3C5S1ASf-aw47DWN1bVpEZmekjsJebvRVR5FP8eev7WzukBi26VX3sQo1yAI9zHKosL6Bl-3Rnc8Rmb34McNhntzkCw5rrZILA7lpNDMNhEA">
+
+            <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/40 to-transparent flex items-end p-space-sm">
+
+                <div class="flex items-center gap-2 text-primary">
+
+                    <span class="material-symbols-outlined text-primary-container text-[20px]">
+                        location_on
+                    </span>
+
+                    <span class="font-label-uppercase text-label-uppercase tracking-wider">
+                        Sede Central y Red Digital SaBré
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {# NUESTROS SERVICIOS #}
+        <section class="flex flex-col gap-space-sm">
+
+            <div class="flex items-center justify-between">
+
+                <h2 class="font-headline-md text-headline-md text-primary uppercase tracking-tight flex items-center gap-2">
+
+                    <span class="material-symbols-outlined text-primary-container text-[24px]">
+                        apps
+                    </span>
+
+                    NUESTROS SERVICIOS
+
+                </h2>
+
+                <span class="font-label-uppercase text-label-uppercase text-on-surface-variant">
+                    5 Módulos
+                </span>
+
+            </div>
+
+
+            <div class="flex flex-col gap-space-xs">
+
+
+                {# SERVICIO 1: PRÉSTAMOS #}
+                <article class="bg-surface-container rounded-xl p-space-sm shadow-sm flex items-start gap-space-sm">
+
+                    <div class="w-11 h-11 rounded bg-surface-container-highest flex items-center justify-center text-primary-container shrink-0">
+
+                        <span class="material-symbols-outlined text-[26px]">
+                            menu_book
+                        </span>
+
+                    </div>
+
+                    <div class="flex flex-col flex-1 min-w-0">
+
+                        <div class="flex items-center justify-between gap-2">
+
+                            <h3 class="font-title-card text-title-card text-primary truncate">
+                                Préstamos Adaptados
+                            </h3>
+
+                            <span class="font-label-uppercase text-label-uppercase text-primary-container bg-surface-container-lowest px-2 py-0.5 rounded">
+                                Físico
+                            </span>
+
+                        </div>
+
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                            Libros en macrocaracteres, tipografías legibles y formatos optimizados para personas con baja visión.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                {# SERVICIO 2: AUDIO #}
+                <article class="bg-surface-container rounded-xl p-space-sm shadow-sm flex items-start gap-space-sm">
+
+                    <div class="w-11 h-11 rounded bg-surface-container-highest flex items-center justify-center text-primary-container shrink-0">
+
+                        <span class="material-symbols-outlined text-[26px]">
+                            headphones
+                        </span>
+
+                    </div>
+
+                    <div class="flex flex-col flex-1 min-w-0">
+
+                        <div class="flex items-center justify-between gap-2">
+
+                            <h3 class="font-title-card text-title-card text-primary truncate">
+                                Audioteca Inclusiva
+                            </h3>
+
+                            <span class="font-label-uppercase text-label-uppercase text-primary-container bg-surface-container-lowest px-2 py-0.5 rounded">
+                                Audio
+                            </span>
+
+                        </div>
+
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                            Extensa colección de audiolibros humanos con reproductores táctiles accesibles y control de velocidad.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                {# SERVICIO 3: BRAILLE #}
+                <article class="bg-surface-container rounded-xl p-space-sm shadow-sm flex items-start gap-space-sm">
+
+                    <div class="w-11 h-11 rounded bg-surface-container-highest flex items-center justify-center text-primary-container shrink-0">
+
+                        <span class="material-symbols-outlined text-[26px]">
+                            keyboard
+                        </span>
+
+                    </div>
+
+                    <div class="flex flex-col flex-1 min-w-0">
+
+                        <div class="flex items-center justify-between gap-2">
+
+                            <h3 class="font-title-card text-title-card text-primary truncate">
+                                Sistema Braille
+                            </h3>
+
+                            <span class="font-label-uppercase text-label-uppercase text-primary-container bg-surface-container-lowest px-2 py-0.5 rounded">
+                                Táctil
+                            </span>
+
+                        </div>
+
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                            Literatura clásica y contemporánea, revistas periódicas y documentación institucional impresa en braille.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                {# SERVICIO 4: TALLERES #}
+                <article class="bg-surface-container rounded-xl p-space-sm shadow-sm flex items-start gap-space-sm">
+
+                    <div class="w-11 h-11 rounded bg-surface-container-highest flex items-center justify-center text-primary-container shrink-0">
+
+                        <span class="material-symbols-outlined text-[26px]">
+                            groups_3
+                        </span>
+
+                    </div>
+
+                    <div class="flex flex-col flex-1 min-w-0">
+
+                        <div class="flex items-center justify-between gap-2">
+
+                            <h3 class="font-title-card text-title-card text-primary truncate">
+                                Talleres &amp; Cultura
+                            </h3>
+
+                            <span class="font-label-uppercase text-label-uppercase text-primary-container bg-surface-container-lowest px-2 py-0.5 rounded">
+                                Comunidad
+                            </span>
+
+                        </div>
+
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                            Actividades formativas, clubes de lectura accesible y eventos culturales con interpretación en lengua de señas.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                {# SERVICIO 5: INFORMÁTICA #}
+                <article class="bg-surface-container rounded-xl p-space-sm shadow-sm flex items-start gap-space-sm">
+
+                    <div class="w-11 h-11 rounded bg-surface-container-highest flex items-center justify-center text-primary-container shrink-0">
+
+                        <span class="material-symbols-outlined text-[26px]">
+                            desktop_windows
+                        </span>
+
+                    </div>
+
+                    <div class="flex flex-col flex-1 min-w-0">
+
+                        <div class="flex items-center justify-between gap-2">
+
+                            <h3 class="font-title-card text-title-card text-primary truncate">
+                                Puestos Tecnológicos
+                            </h3>
+
+                            <span class="font-label-uppercase text-label-uppercase text-primary-container bg-surface-container-lowest px-2 py-0.5 rounded">
+                                Tiflotecnia
+                            </span>
+
+                        </div>
+
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                            Terminales equipadas con lectores de pantalla NVDA/JAWS, teclados adaptados y software magnificador.
+                        </p>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        {# IMAGEN SECUNDARIA: COMUNIDAD #}
+        <div class="relative w-full h-36 rounded-xl overflow-hidden shadow-md">
+
+            <img class="w-full h-full object-cover"
+                 alt="Manos leyendo un volumen en braille sobre una mesa comunitaria junto a auriculares."
+                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd8MjbtRnjujgCzFb-loG4gCvjBxjTrOz8fTDE6Z5SSnlXiK5j42vzChPrXaXg1myqEr4memLI1NDUgsSgutxGpc4Qd2jWwta9ONfRVkmMxnS6zoNzcyKrG0Afu6cqZQMIq9ZB2MC2A8TKOy4pgxtNHrrTt-lzrEgrAF5EV5GDYdfdZubBdfU6VjbaRQr7u6_VS9P72COc1ugL0wPUi-l7foJSpP3tKfuverbcZZUNC833VicYVfYFEg">
+
+            <div class="absolute inset-0 bg-surface-container-lowest/60 flex items-center px-space-md">
+
+                <div class="flex flex-col">
+
+                    <span class="font-label-uppercase text-label-uppercase text-primary-container uppercase">
+                        Cultura Compartida
+                    </span>
+
+                    <span class="font-title-card text-title-card text-primary">
+                        Un punto de encuentro para el saber universal
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {# COLABORACIÓN SOLIDARIA #}
+        <section class="bg-surface-container rounded-xl p-space-md shadow-md flex flex-col gap-space-sm">
+
+            <div class="flex items-center gap-space-sm">
+
+                <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-container shrink-0">
+
+                    <span class="material-symbols-outlined text-[24px]">
+                        handshake
+                    </span>
+
+                </div>
+
+                <div class="flex flex-col">
+
+                    <span class="font-label-uppercase text-label-uppercase text-primary-container tracking-wider">
+                        ESPACIO ABIERTO
+                    </span>
+
+                    <h2 class="font-headline-md text-headline-md text-primary uppercase tracking-tight">
+                        COLABORACIÓN SOLIDARIA
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
+
+                <strong class="text-primary">Biblioteca SaBré</strong> es una iniciativa comunitaria pública y autogestionada. El acceso a los libros, materiales adaptados y servicios informáticos es
+
+                <span class="text-primary-container font-semibold">
+                    100% gratuito e incondicional
+                </span>.
+
+            </p>
+
+
+            <div class="bg-surface-container-lowest rounded-lg p-space-sm flex flex-col gap-space-xs">
+
+                <div class="flex items-center gap-2 text-primary font-button-text text-body-sm">
+
+                    <span class="material-symbols-outlined text-primary-container text-[18px]">
+                        volunteer_activism
+                    </span>
+
+                    <span>Aportes 100% Voluntarios</span>
+
+                </div>
+
+                <p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Si está en tus posibilidades, puedes colaborar con un bono contribución simbólico o acercando alimentos no perecederos para el comedor comunitario barrial. Tu aporte no condiciona ningún servicio.
+                </p>
+
+            </div>
+
+
+            <button class="w-full min-h-[48px] px-space-md py-3 rounded bg-surface-container-highest hover:bg-surface-bright text-primary font-button-text text-button-text uppercase tracking-wider flex items-center justify-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-container"
+                    type="button">
+
+                <span class="material-symbols-outlined text-primary-container text-[20px]">
+                    favorite
+                </span>
+
+                <span>Conocer Formas de Colaborar</span>
+
+            </button>
+
+        </section>
+
+
+        {# HORARIOS Y CONTACTO #}
+        <section class="grid grid-cols-2 gap-space-xs">
+
+            <div class="bg-surface-container rounded-lg p-space-sm flex flex-col gap-1">
+
+                <span class="material-symbols-outlined text-primary-container text-[22px]">
+                    schedule
+                </span>
+
+                <span class="font-label-uppercase text-label-uppercase text-primary">
+                    Atención
+                </span>
+
+                <span class="font-body-sm text-body-sm text-on-surface-variant">
+                    Lun a Sáb · 09:00 a 19:00
+                </span>
+
+            </div>
+
+
+            <div class="bg-surface-container rounded-lg p-space-sm flex flex-col gap-1">
+
+                <span class="material-symbols-outlined text-primary-container text-[22px]">
+                    headset_mic
+                </span>
+
+                <span class="font-label-uppercase text-label-uppercase text-primary">
+                    Línea Directa
+                </span>
+
+                <span class="font-body-sm text-body-sm text-on-surface-variant">
+                    +54 (11) 4589-2234
+                </span>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+{% endblock %}
+
+
+{% block navegacion_inferior %}
+<nav aria-label="Navegación principal">
+    <div class="nav-inferior-contenedor">
+
+        <a href="{% url 'index_usuario' %}" class="nav-inferior-enlace activo" aria-current="page">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">home</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Inicio</span>
+        </a>
+
+        <a href="{% url 'usuario_catalogo' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">menu_book</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Catálogo</span>
+        </a>
+
+        <a href="{% url 'usuario_prestamos' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">schedule</span>
+                <span class="nav-inferior-indicador"></span>
+            </span>
+            <span class="nav-inferior-etiqueta">Préstamos</span>
+        </a>
+
+        <a href="{% url 'usuario_historial' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">history</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Historial</span>
+        </a>
+
+        <a href="{% url 'usuario_comunidad' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">groups</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Comunidad</span>
+        </a>
+
+        <a href="{% url 'usuario_perfil' %}" class="nav-inferior-enlace">
+            <span class="nav-inferior-icono">
+                <span class="material-symbols-outlined">account_circle</span>
+            </span>
+            <span class="nav-inferior-etiqueta">Perfil</span>
+        </a>
+
+    </div>
+</nav>
+{% endblock %}
